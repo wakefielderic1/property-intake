@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Intake — WhyNot Automate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple-deep: #26215C;
+    --purple-brand: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-mid: #AFA9EC;
+    --white: #ffffff;
+    --off-white: #F7F6FF;
+    --gray-text: #6B6B80;
+    --gray-border: #E2E1F0;
+    --red: #E24B4A;
+    --green: #1D9E75;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--purple-deep);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    width: 100%;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .logo { display: flex; align-items: baseline; gap: 10px; }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 20px;
+    letter-spacing: 0.1em;
+    color: var(--white);
+  }
+
+  .tagline {
+    font-size: 11px;
+    color: var(--purple-mid);
+    letter-spacing: 0.06em;
+    font-weight: 300;
+  }
+
+  .powered-by {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+  }
+  .powered-by span { color: var(--purple-mid); font-weight: 500; }
+
+  main {
+    width: 100%;
+    max-width: 560px;
+    padding: 2rem 1.5rem 4rem;
+    flex: 1;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Progress */
+  .progress-bar { display: flex; gap: 5px; margin-bottom: 2rem; }
+  .progress-seg {
+    height: 3px; flex: 1; border-radius: 2px;
+    background: rgba(255,255,255,0.1);
+    transition: background 0.3s;
+  }
+  .progress-seg.done { background: var(--purple-brand); }
+
+  /* Step header */
+  .step-header { margin-bottom: 1.75rem; }
+  .step-number {
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--purple-mid); font-weight: 500; margin-bottom: 6px;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: 26px; font-weight: 400;
+    color: var(--white); line-height: 1.2; margin-bottom: 6px;
+  }
+  .step-sub {
+    font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 300;
+  }
+
+  /* Fields */
+  .field { margin-bottom: 1rem; }
+  .field label {
+    display: block; font-size: 12px; letter-spacing: 0.05em;
+    color: var(--purple-mid); font-weight: 500; margin-bottom: 6px;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%; padding: 11px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; font-size: 14px;
+    color: var(--white); font-family: var(--font-body);
+    font-weight: 400; transition: border 0.2s; outline: none;
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field input::placeholder,
+  .field textarea::placeholder { color: rgba(255,255,255,0.25); }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--purple-brand);
+    background: rgba(83,74,183,0.12);
+  }
+  .field select option { background: var(--purple-deep); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* Pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .pill {
+    padding: 7px 14px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px; font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .pill.selected {
+    background: var(--purple-brand);
+    border-color: var(--purple-brand);
+    color: var(--white);
+  }
+
+  /* Season rows */
+  .season-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 0.7fr;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 10px;
+  }
+  .season-row label {
+    font-size: 11px; letter-spacing: 0.05em;
+    color: var(--purple-mid); font-weight: 500;
+    display: block; margin-bottom: 4px;
+  }
+  .season-row input, .season-row select {
+    width: 100%; padding: 9px 11px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; font-size: 13px;
+    color: var(--white); font-family: var(--font-body);
+    outline: none; transition: border 0.2s;
+  }
+  .season-row input:focus, .season-row select:focus {
+    border-color: var(--purple-brand);
+    background: rgba(83,74,183,0.12);
+  }
+  .season-row select option { background: var(--purple-deep); }
+
+  .add-season-btn {
+    background: transparent;
+    border: 1px dashed rgba(255,255,255,0.2);
+    border-radius: 8px; color: rgba(255,255,255,0.4);
+    font-size: 13px; font-family: var(--font-body);
+    padding: 9px 14px; cursor: pointer; width: 100%;
+    margin-top: 4px; transition: all 0.2s;
+  }
+  .add-season-btn:hover {
+    border-color: var(--purple-brand);
+    color: var(--purple-mid);
+  }
+
+  .remove-btn {
+    background: transparent; border: none;
+    color: rgba(255,255,255,0.2); font-size: 18px;
+    cursor: pointer; padding: 0 4px; line-height: 1;
+    transition: color 0.15s;
+  }
+  .remove-btn:hover { color: var(--red); }
+
+  /* Policy rows */
+  .policy-row { margin-bottom: 1rem; }
+  .policy-row label {
+    font-size: 12px; letter-spacing: 0.05em;
+    color: var(--purple-mid); font-weight: 500;
+    margin-bottom: 5px; display: flex;
+    align-items: center; gap: 8px;
+  }
+  .policy-toggle {
+    width: 34px; height: 20px; border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    position: relative; cursor: pointer;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .policy-toggle.on { background: var(--purple-brand); }
+  .policy-toggle::after {
+    content: ''; position: absolute;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: white; top: 3px; left: 3px;
+    transition: transform 0.2s;
+  }
+  .policy-toggle.on::after { transform: translateX(14px); }
+  .policy-text-input {
+    width: 100%; padding: 9px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; font-size: 13px;
+    color: var(--white); font-family: var(--font-body);
+    outline: none; margin-top: 6px; transition: border 0.2s;
+  }
+  .policy-text-input:focus {
+    border-color: var(--purple-brand);
+    background: rgba(83,74,183,0.12);
+  }
+  .policy-text-input::placeholder { color: rgba(255,255,255,0.2); }
+
+  /* Upsell items */
+  .upsell-item {
+    display: grid;
+    grid-template-columns: 1.8fr 0.8fr 0.8fr;
+    gap: 8px; align-items: center; margin-bottom: 8px;
+  }
+  .upsell-item label {
+    font-size: 13px; color: rgba(255,255,255,0.7);
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .upsell-item input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--purple-brand);
+    cursor: pointer; flex-shrink: 0;
+  }
+  .upsell-sub-input {
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; font-size: 13px;
+    color: var(--white); font-family: var(--font-body);
+    outline: none; width: 100%;
+  }
+  .upsell-sub-input:focus { border-color: var(--purple-brand); }
+  .upsell-sub-input:disabled { opacity: 0.2; cursor: not-allowed; }
+  .upsell-unit {
+    font-size: 11px; color: rgba(255,255,255,0.3);
+    text-align: center;
+  }
+
+  /* Escalation */
+  .esc-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; margin-bottom: 8px;
+    font-size: 13px; color: rgba(255,255,255,0.7);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .esc-item.active {
+    background: rgba(83,74,183,0.2);
+    border-color: var(--purple-brand);
+    color: var(--white);
+  }
+  .esc-item input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: var(--purple-brand); flex-shrink: 0;
+  }
+
+  /* Section divider */
+  .section-label {
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--purple-mid); font-weight: 500;
+    margin: 1.25rem 0 0.75rem;
+    text-transform: uppercase;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    width: 100%; padding: 14px;
+    background: var(--purple-brand); color: var(--white);
+    border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 500;
+    font-family: var(--font-body); cursor: pointer;
+    margin-top: 1.5rem; transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: #3C3489; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-back {
+    padding: 14px 20px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; color: rgba(255,255,255,0.6);
+    font-size: 15px; font-family: var(--font-body);
+    cursor: pointer; transition: border 0.2s;
+  }
+  .btn-back:hover { border-color: rgba(255,255,255,0.3); }
+
+  .btn-row { display: flex; gap: 10px; align-items: center; margin-top: 1.5rem; }
+  .btn-row .btn-primary { margin-top: 0; flex: 1; }
+
+  /* Done screen */
+  .done-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(29,158,117,0.15);
+    border: 1px solid rgba(29,158,117,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 28px;
+  }
+  .done-title {
+    font-family: var(--font-display);
+    font-size: 30px; font-weight: 400;
+    text-align: center; margin-bottom: 8px;
+  }
+  .done-sub {
+    font-size: 14px; color: rgba(255,255,255,0.45);
+    text-align: center; font-weight: 300;
+    line-height: 1.6; margin-bottom: 2rem;
+  }
+  .done-summary {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 1.25rem;
+  }
+  .done-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .done-row:last-child { border-bottom: none; }
+  .done-row span:first-child { color: rgba(255,255,255,0.45); }
+  .done-row span:last-child { font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="wordmark">WhyNot Automate</span>
+    <span class="tagline">AI Guest Messaging Setup</span>
+  </div>
+  <span class="powered-by">property <span>knowledge base</span></span>
+</header>
+
+<main>
+  <div id="screen-form" class="screen active">
+    <div class="progress-bar" id="progress-bar"></div>
+    <div id="form-content"></div>
+  </div>
+
+  <div id="screen-done" class="screen">
+    <div class="done-icon">✓</div>
+    <h2 class="done-title">Property registered.</h2>
+    <p class="done-sub">Tu knowledge base está lista. El sistema de mensajería<br>WhatsApp AI ya tiene todo lo que necesita.</p>
+    <div class="done-summary" id="done-summary"></div>
+    <button class="btn-primary" style="margin-top:1.5rem" onclick="restart()">Register another property →</button>
+  </div>
+</main>
+
+<script>
+const MAKE_WEBHOOK_URL = ''; // ← paste your Make webhook URL here
+
+// ── DATA ────────────────────────────────────────────────
+let currentStep = 0;
+let formData = {};
+let seasonRows = 1;
+
+const AMENITIES = [
+  'Alberca privada','Alberca compartida','Jacuzzi','Playa privada','Vista al mar',
+  'Vista a la montaña','Jardín','Terraza/Rooftop','Estacionamiento','Gym',
+  'Cocina equipada','Parrilla/BBQ','Sala de juegos','Cine en casa','Pet friendly'
+];
+
+const LANGUAGES = ['Español','English','Português','Français','Deutsch'];
+
+const UPSELLS = [
+  { id:'transfer', label:'Transfer aeropuerto', unit:'por viaje' },
+  { id:'breakfast', label:'Desayuno diario', unit:'por persona/día' },
+  { id:'chef', label:'Chef privado', unit:'por cena' },
+  { id:'massage', label:'Masaje in-house', unit:'por sesión' },
+  { id:'tour', label:'Tour / excursión', unit:'por persona' },
+  { id:'groceries', label:'Despensa pre-llegada', unit:'por pedido' },
+  { id:'kayak', label:'Kayak / equipo acuático', unit:'por día' },
+  { id:'babysitter', label:'Babysitter', unit:'por hora' },
+  { id:'yoga', label:'Clase de yoga', unit:'por sesión' },
+  { id:'cleaning', label:'Limpieza extra', unit:'por servicio' },
+];
+
+const ESC_TRIGGERS = [
+  { id:'long_stay', label:'Estancia de 7+ noches' },
+  { id:'large_group', label:'Grupo de 5+ personas' },
+  { id:'discount', label:'Solicitud de descuento' },
+  { id:'peak_dates', label:'Fechas en temporada alta' },
+  { id:'availability', label:'Consulta de disponibilidad exacta' },
+  { id:'special_request', label:'Petición especial / fuera de lo normal' },
+  { id:'complaint', label:'Queja o problema urgente' },
+  { id:'group_event', label:'Evento o celebración en el property' },
+];
+
+// ── STEPS ───────────────────────────────────────────────
+const STEPS = [
+  { id: 'info', title: 'Tell us about your property.', sub: 'Basic info the AI will use to introduce itself.' },
+  { id: 'rates', title: 'Rates & availability.', sub: 'Set your seasons and nightly rates.' },
+  { id: 'amenities', title: 'What does your property offer?', sub: 'Select all amenities guests can expect.' },
+  { id: 'policies', title: 'House rules & policies.', sub: 'The AI will communicate these clearly to every guest.' },
+  { id: 'upsells', title: 'Upsells & add-on services.', sub: 'What can guests add to their stay?' },
+  { id: 'escalation', title: 'When should we alert you?', sub: 'The AI handles the rest — these go straight to your WhatsApp.' },
+  { id: 'contact', title: 'Owner contact & voice.', sub: 'How the AI should sound, and where to reach you.' },
+];
+
+// ── RENDER ──────────────────────────────────────────────
+function renderProgress() {
+  const bar = document.getElementById('progress-bar');
+  bar.innerHTML = STEPS.map((_, i) =>
+    `<div class="progress-seg ${i < currentStep ? 'done' : i === currentStep ? 'done' : ''}"></div>`
+  ).join('');
+}
+
+function renderStep() {
+  renderProgress();
+  const step = STEPS[currentStep];
+  const isLast = currentStep === STEPS.length - 1;
+  let html = `
+    <div class="step-header">
+      <div class="step-number">STEP ${currentStep + 1} OF ${STEPS.length}</div>
+      <h2>${step.title}</h2>
+      <p class="step-sub">${step.sub}</p>
+    </div>`;
+
+  html += renderStepContent(step.id);
+
+  const backBtn = currentStep > 0
+    ? `<button class="btn-back" onclick="goBack()">← Back</button>` : '';
+  html += `<div class="btn-row">
+    ${backBtn}
+    <button class="btn-primary" onclick="goNext()">${isLast ? 'Finish & save →' : 'Next →'}</button>
+  </div>`;
+
+  document.getElementById('form-content').innerHTML = html;
+  attachListeners(step.id);
+}
+
+function renderStepContent(id) {
+  const d = formData;
+  switch(id) {
+
+    case 'info': return `
+      <div class="field">
+        <label>PROPERTY NAME</label>
+        <input type="text" id="f-propName" value="${d.propName||''}" placeholder="Ej. Casa Azul Tulum">
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>CITY</label>
+          <input type="text" id="f-city" value="${d.city||''}" placeholder="Tulum">
+        </div>
+        <div class="field">
+          <label>COUNTRY</label>
+          <input type="text" id="f-country" value="${d.country||''}" placeholder="México">
+        </div>
+      </div>
+      <div class="field">
+        <label>FULL ADDRESS</label>
+        <input type="text" id="f-address" value="${d.address||''}" placeholder="Calle Centauro Sur 142, Tulum, QR">
+      </div>
+      <div class="grid3">
+        <div class="field">
+          <label>BEDROOMS</label>
+          <input type="number" id="f-bedrooms" value="${d.bedrooms||''}" placeholder="3">
+        </div>
+        <div class="field">
+          <label>BATHROOMS</label>
+          <input type="number" id="f-bathrooms" value="${d.bathrooms||''}" placeholder="2">
+        </div>
+        <div class="field">
+          <label>MAX GUESTS</label>
+          <input type="number" id="f-maxGuests" value="${d.maxGuests||''}" placeholder="6">
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>CHECK-IN TIME</label>
+          <input type="time" id="f-checkin" value="${d.checkin||'15:00'}">
+        </div>
+        <div class="field">
+          <label>CHECK-OUT TIME</label>
+          <input type="time" id="f-checkout" value="${d.checkout||'11:00'}">
+        </div>
+      </div>
+      <div class="field">
+        <label>WIFI NAME</label>
+        <input type="text" id="f-wifiName" value="${d.wifiName||''}" placeholder="CasaAzul_Guest">
+      </div>
+      <div class="field">
+        <label>WIFI PASSWORD</label>
+        <input type="text" id="f-wifiPass" value="${d.wifiPass||''}" placeholder="tulum2024">
+      </div>
+      <div class="field">
+        <label>LANGUAGES SPOKEN AT PROPERTY</label>
+        <div class="pills">
+          ${LANGUAGES.map(l => `<div class="pill${(d.languages||[]).includes(l)?' selected':''}" data-val="${l}" data-group="languages">${l}</div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'rates': return `
+      <div class="section-label">SEASONS & RATES</div>
+      <div id="seasons-container">
+        ${renderSeasonRows()}
+      </div>
+      <button class="add-season-btn" onclick="addSeason()">+ Add season</button>
+      <div class="section-label" style="margin-top:1.5rem">BOOKING SETTINGS</div>
+      <div class="grid2">
+        <div class="field">
+          <label>MIN NIGHTS (DEFAULT)</label>
+          <input type="number" id="f-minNights" value="${d.minNights||'2'}" placeholder="2">
+        </div>
+        <div class="field">
+          <label>DEPOSIT REQUIRED (%)</label>
+          <input type="number" id="f-deposit" value="${d.deposit||'30'}" placeholder="30">
+        </div>
+      </div>
+      <div class="field">
+        <label>CURRENCY</label>
+        <select id="f-currency">
+          ${['USD','MXN','EUR','USD/MXN'].map(c=>`<option${(d.currency||'USD')===c?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>`;
+
+    case 'amenities': return `
+      <div class="field">
+        <label>SELECT ALL THAT APPLY</label>
+        <div class="pills">
+          ${AMENITIES.map(a => `<div class="pill${(d.amenities||[]).includes(a)?' selected':''}" data-val="${a}" data-group="amenities">${a}</div>`).join('')}
+        </div>
+      </div>
+      <div class="field" style="margin-top:1rem">
+        <label>OTHER AMENITIES (optional)</label>
+        <textarea id="f-amenitiesExtra" placeholder="Ej. Cenote privado, cancha de tennis...">${d.amenitiesExtra||''}</textarea>
+      </div>
+      <div class="field">
+        <label>NEAREST BEACH / ATTRACTION</label>
+        <input type="text" id="f-nearestBeach" value="${d.nearestBeach||''}" placeholder="Playa Paraíso, 8 min en auto">
+      </div>`;
+
+    case 'policies': return `
+      ${renderPolicyRow('cancellation','CANCELLATION POLICY','Cancelación gratuita hasta 14 días antes. Después, 50% de penalización.')}
+      ${renderPolicyRow('smoking','SMOKING','No está permitido fumar dentro ni en áreas techadas.')}
+      ${renderPolicyRow('pets','PETS','No se permiten mascotas.')}
+      ${renderPolicyRow('parties','EVENTS & PARTIES','No se permiten fiestas. Ruido máximo hasta las 10 PM.')}
+      ${renderPolicyRow('extraGuests','EXTRA GUESTS','Hasta 2 adicionales con cargo de $30 USD/noche.')}
+      ${renderPolicyRow('earlyCheckin','EARLY CHECK-IN','Sujeto a disponibilidad, cargo de $40 USD. Confirmar con el owner.')}
+      ${renderPolicyRow('lateCheckout','LATE CHECK-OUT','Sujeto a disponibilidad, cargo de $40 USD. Confirmar con el owner.')}
+      <div class="field" style="margin-top:1rem">
+        <label>ANY OTHER IMPORTANT RULES</label>
+        <textarea id="f-otherPolicies" placeholder="Ej. No se permiten zapatillas en la alberca...">${d.otherPolicies||''}</textarea>
+      </div>`;
+
+    case 'upsells': return `
+      <div style="display:grid; grid-template-columns:1.8fr 0.8fr 0.8fr; gap:8px; margin-bottom:6px;">
+        <span style="font-size:11px;color:var(--purple-mid);letter-spacing:.05em">SERVICE</span>
+        <span style="font-size:11px;color:var(--purple-mid);letter-spacing:.05em">PRICE (USD)</span>
+        <span style="font-size:11px;color:var(--purple-mid);letter-spacing:.05em;text-align:center">UNIT</span>
+      </div>
+      ${UPSELLS.map(u => {
+        const saved = (d.upsells||{})[u.id];
+        const checked = saved !== undefined;
+        return `<div class="upsell-item">
+          <label>
+            <input type="checkbox" id="ck-${u.id}" ${checked?'checked':''} onchange="toggleUpsell('${u.id}')">
+            ${u.label}
+          </label>
+          <input type="number" class="upsell-sub-input" id="up-${u.id}"
+            value="${saved||''}" placeholder="$0" min="0" ${checked?'':'disabled'}>
+          <span class="upsell-unit">${u.unit}</span>
+        </div>`;
+      }).join('')}
+      <div class="field" style="margin-top:1rem">
+        <label>OTHER SERVICES (optional)</label>
+        <textarea id="f-upsellExtra" placeholder="Ej. Renta de autos, pesca deportiva...">${d.upsellExtra||''}</textarea>
+      </div>`;
+
+    case 'escalation': return `
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:1rem;font-weight:300">
+        The AI answers everything else automatically — tap to select what goes straight to you.
+      </p>
+      <div id="esc-list">
+        ${ESC_TRIGGERS.map(e => `
+          <div class="esc-item${(d.escalation||[]).includes(e.id)?' active':''}" id="esc-${e.id}" onclick="toggleEsc('${e.id}')">
+            <input type="checkbox" ${(d.escalation||[]).includes(e.id)?'checked':''} onclick="event.stopPropagation()">
+            ${e.label}
+          </div>`).join('')}
+      </div>
+      <div class="field" style="margin-top:1rem">
+        <label>OWNER RESPONSE TIME PROMISE TO GUESTS</label>
+        <select id="f-responseTime">
+          ${['En menos de 15 minutos','En menos de 1 hora','En menos de 2 horas','En menos de 4 horas'].map(r=>`<option${(d.responseTime||'')===r?' selected':''}>${r}</option>`).join('')}
+        </select>
+      </div>`;
+
+    case 'contact': return `
+      <div class="field">
+        <label>OWNER / MANAGER NAME</label>
+        <input type="text" id="f-ownerName" value="${d.ownerName||''}" placeholder="Carlos Méndez">
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>WHATSAPP (owner)</label>
+          <input type="tel" id="f-ownerWhatsapp" value="${d.ownerWhatsapp||''}" placeholder="+52 984 000 0000">
+        </div>
+        <div class="field">
+          <label>EMAIL</label>
+          <input type="email" id="f-ownerEmail" value="${d.ownerEmail||''}" placeholder="owner@email.com">
+        </div>
+      </div>
+      <div class="field">
+        <label>PROPERTY WHATSAPP NUMBER (guests write here)</label>
+        <input type="tel" id="f-propertyWhatsapp" value="${d.propertyWhatsapp||''}" placeholder="+52 984 111 2222">
+      </div>
+      <div class="section-label">AI BRAND VOICE</div>
+      <div class="field">
+        <label>TONE</label>
+        <select id="f-tone">
+          ${['Cálido y cercano','Profesional y formal','Amigable y casual','Lujoso y exclusivo'].map(t=>`<option${(d.tone||'')===t?' selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>PRIMARY RESPONSE LANGUAGE</label>
+        <select id="f-primaryLang">
+          ${['Español','English','Both (match guest)'].map(l=>`<option${(d.primaryLang||'Both (match guest)')===l?' selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>ANYTHING ELSE THE AI SHOULD KNOW</label>
+        <textarea id="f-aiNotes" placeholder="Ej. Mencionar siempre el cenote privado, no prometer descuentos...">${d.aiNotes||''}</textarea>
+      </div>`;
+
+    default: return '';
+  }
+}
+
+function renderSeasonRows() {
+  const seasons = formData.seasons || [{ name:'', rate:'', minNights:'', notes:'' }];
+  return seasons.map((s, i) => `
+    <div class="season-row" id="season-${i}">
+      <div>
+        ${i===0?'<label>SEASON NAME</label>':''}
+        <input type="text" id="sn-${i}" value="${s.name||''}" placeholder="Ej. Alta, Baja, Navidad">
+      </div>
+      <div>
+        ${i===0?'<label>RATE / NIGHT</label>':''}
+        <input type="number" id="sr-${i}" value="${s.rate||''}" placeholder="$180">
+      </div>
+      <div>
+        ${i===0?'<label>MIN NIGHTS</label>':''}
+        <input type="number" id="sm-${i}" value="${s.minNights||''}" placeholder="2">
+      </div>
+      <div style="display:flex;align-items:${i===0?'flex-end':'center'};padding-bottom:${i===0?'0':''}">
+        ${i===0?'<label style="opacity:0">X</label>':''}
+        ${i > 0 ? `<button class="remove-btn" onclick="removeSeason(${i})">×</button>` : '<div style="width:32px"></div>'}
+      </div>
+    </div>`).join('');
+}
+
+function renderPolicyRow(id, label, placeholder) {
+  const d = formData;
+  const val = (d.policies||{})[id] || '';
+  return `
+    <div class="policy-row">
+      <label>
+        <div class="policy-toggle${val?'':''}" id="tog-${id}" onclick="togglePolicy('${id}')"></div>
+        ${label}
+      </label>
+      <textarea class="policy-text-input" id="pol-${id}" placeholder="${placeholder}">${val}</textarea>
+    </div>`;
+}
+
+// ── LISTENERS ────────────────────────────────────────────
+function attachListeners(stepId) {
+  document.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => p.classList.toggle('selected'));
+  });
+}
+
+function toggleUpsell(id) {
+  const ck = document.getElementById('ck-' + id);
+  const inp = document.getElementById('up-' + id);
+  inp.disabled = !ck.checked;
+  if (!ck.checked) inp.value = '';
+}
+
+function toggleEsc(id) {
+  const el = document.getElementById('esc-' + id);
+  const cb = el.querySelector('input[type="checkbox"]');
+  el.classList.toggle('active');
+  cb.checked = el.classList.contains('active');
+}
+
+function togglePolicy(id) {
+  const tog = document.getElementById('tog-' + id);
+  tog.classList.toggle('on');
+}
+
+function addSeason() {
+  const seasons = collectSeasons();
+  seasons.push({ name:'', rate:'', minNights:'', notes:'' });
+  formData.seasons = seasons;
+  document.getElementById('seasons-container').innerHTML = renderSeasonRows();
+}
+
+function removeSeason(i) {
+  const seasons = collectSeasons();
+  seasons.splice(i, 1);
+  formData.seasons = seasons;
+  document.getElementById('seasons-container').innerHTML = renderSeasonRows();
+}
+
+function collectSeasons() {
+  const seasons = [];
+  let i = 0;
+  while (document.getElementById('sn-' + i)) {
+    seasons.push({
+      name: document.getElementById('sn-' + i).value,
+      rate: document.getElementById('sr-' + i).value,
+      minNights: document.getElementById('sm-' + i).value,
+    });
+    i++;
+  }
+  return seasons;
+}
+
+// ── SAVE ─────────────────────────────────────────────────
+function saveStep() {
+  const id = STEPS[currentStep].id;
+
+  if (id === 'info') {
+    ['propName','city','country','address','bedrooms','bathrooms','maxGuests',
+     'checkin','checkout','wifiName','wifiPass'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
+    formData.languages = [...document.querySelectorAll('[data-group="languages"].selected')].map(p => p.dataset.val);
+  }
+
+  if (id === 'rates') {
+    formData.seasons = collectSeasons();
+    ['minNights','deposit','currency'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
+  }
+
+  if (id === 'amenities') {
+    formData.amenities = [...document.querySelectorAll('[data-group="amenities"].selected')].map(p => p.dataset.val);
+    const ex = document.getElementById('f-amenitiesExtra');
+    const nb = document.getElementById('f-nearestBeach');
+    if (ex) formData.amenitiesExtra = ex.value;
+    if (nb) formData.nearestBeach = nb.value;
+  }
+
+  if (id === 'policies') {
+    formData.policies = {};
+    ['cancellation','smoking','pets','parties','extraGuests','earlyCheckin','lateCheckout'].forEach(p => {
+      const el = document.getElementById('pol-' + p);
+      if (el) formData.policies[p] = el.value;
+    });
+    const op = document.getElementById('f-otherPolicies');
+    if (op) formData.otherPolicies = op.value;
+  }
+
+  if (id === 'upsells') {
+    formData.upsells = {};
+    UPSELLS.forEach(u => {
+      const ck = document.getElementById('ck-' + u.id);
+      const inp = document.getElementById('up-' + u.id);
+      if (ck && ck.checked && inp && inp.value) {
+        formData.upsells[u.id] = { price: parseFloat(inp.value), unit: u.unit, label: u.label };
+      }
+    });
+    const ue = document.getElementById('f-upsellExtra');
+    if (ue) formData.upsellExtra = ue.value;
+  }
+
+  if (id === 'escalation') {
+    formData.escalation = [...document.querySelectorAll('.esc-item.active')].map(el =>
+      el.id.replace('esc-', '')
+    );
+    const rt = document.getElementById('f-responseTime');
+    if (rt) formData.responseTime = rt.value;
+  }
+
+  if (id === 'contact') {
+    ['ownerName','ownerWhatsapp','ownerEmail','propertyWhatsapp','tone','primaryLang','aiNotes'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
+  }
+}
+
+// ── NAV ──────────────────────────────────────────────────
+function goNext() {
+  saveStep();
+  if (currentStep === STEPS.length - 1) {
+    submitForm();
+  } else {
+    currentStep++;
+    renderStep();
+    window.scrollTo(0, 0);
+  }
+}
+
+function goBack() {
+  saveStep();
+  currentStep--;
+  renderStep();
+  window.scrollTo(0, 0);
+}
+
+// ── SUBMIT ───────────────────────────────────────────────
+function submitForm() {
+  const payload = { ...formData, submittedAt: new Date().toISOString() };
+
+  if (MAKE_WEBHOOK_URL) {
+    fetch(MAKE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  }
+
+  showDone(payload);
+}
+
+function showDone(d) {
+  const upsellCount = Object.keys(d.upsells || {}).length;
+  const escCount = (d.escalation || []).length;
+  const seasonCount = (d.seasons || []).filter(s => s.name).length;
+
+  document.getElementById('done-summary').innerHTML = `
+    <div class="done-row"><span>Property</span><span>${d.propName || '—'}</span></div>
+    <div class="done-row"><span>Location</span><span>${d.city || '—'}, ${d.country || '—'}</span></div>
+    <div class="done-row"><span>Seasons configured</span><span>${seasonCount}</span></div>
+    <div class="done-row"><span>Upsells enabled</span><span>${upsellCount}</span></div>
+    <div class="done-row"><span>Escalation triggers</span><span>${escCount}</span></div>
+    <div class="done-row"><span>AI response language</span><span>${d.primaryLang || 'Both'}</span></div>
+    <div class="done-row"><span>Owner WhatsApp</span><span>${d.ownerWhatsapp || '—'}</span></div>
+  `;
+
+  document.getElementById('screen-form').classList.remove('active');
+  document.getElementById('screen-done').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function restart() {
+  currentStep = 0;
+  formData = {};
+  document.getElementById('screen-done').classList.remove('active');
+  document.getElementById('screen-form').classList.add('active');
+  renderStep();
+  window.scrollTo(0, 0);
+}
+
+// ── INIT ─────────────────────────────────────────────────
+renderStep();
+</script>
+</body>
+</html>
