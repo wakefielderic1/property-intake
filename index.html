@@ -602,3 +602,290 @@ function renderStepContent(id) {
         ${ESC_TRIGGERS.map(e => `
           <div class="esc-item${(d.escalation||[]).includes(e.id)?' active':''}" id="esc-${e.id}" onclick="toggleEsc('${e.id}')">
             <input type="checkbox" ${(d.escalation||[]).includes(e.id)?'checked':''} onclick="event.stopPropagation()">
+            ${e.label}
+          </div>`).join('')}
+      </div>
+      <div class="field" style="margin-top:1rem">
+        <label>OWNER RESPONSE TIME PROMISE TO GUESTS</label>
+        <select id="f-responseTime">
+          ${['En menos de 15 minutos','En menos de 1 hora','En menos de 2 horas','En menos de 4 horas'].map(r=>`<option${(d.responseTime||'')===r?' selected':''}>${r}</option>`).join('')}
+        </select>
+      </div>`;
+
+    case 'contact': return `
+      <div class="field">
+        <label>OWNER / MANAGER NAME</label>
+        <input type="text" id="f-ownerName" value="${d.ownerName||''}" placeholder="Carlos Méndez">
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>WHATSAPP (owner)</label>
+          <input type="tel" id="f-ownerWhatsapp" value="${d.ownerWhatsapp||''}" placeholder="+52 984 000 0000">
+        </div>
+        <div class="field">
+          <label>EMAIL</label>
+          <input type="email" id="f-ownerEmail" value="${d.ownerEmail||''}" placeholder="owner@email.com">
+        </div>
+      </div>
+      <div class="section-label">PROPERTY CONTACT NUMBERS</div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:12px;font-weight:300">Números donde los huéspedes contactan al property. El sistema detecta mensajes de cualquiera de estos.</p>
+      <div class="field">
+        <label>WHATSAPP / PHONE NUMBER 1 (primary)</label>
+        <input type="tel" id="f-propertyWhatsapp" value="${d.propertyWhatsapp||''}" placeholder="+52 984 111 2222">
+      </div>
+      <div class="field">
+        <label>WHATSAPP / PHONE NUMBER 2 (optional)</label>
+        <input type="tel" id="f-propertyPhone2" value="${d.propertyPhone2||''}" placeholder="+52 984 333 4444">
+      </div>
+      <div class="field">
+        <label>WHATSAPP / PHONE NUMBER 3 (optional)</label>
+        <input type="tel" id="f-propertyPhone3" value="${d.propertyPhone3||''}" placeholder="+52 984 555 6666">
+      </div>
+      <div class="section-label">AI BRAND VOICE</div>
+      <div class="field">
+        <label>TONE</label>
+        <select id="f-tone">
+          ${['Cálido y cercano','Profesional y formal','Amigable y casual','Lujoso y exclusivo'].map(t=>`<option${(d.tone||'')===t?' selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>PRIMARY RESPONSE LANGUAGE</label>
+        <select id="f-primaryLang">
+          ${['Español','English','Both (match guest)'].map(l=>`<option${(d.primaryLang||'Both (match guest)')===l?' selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>ANYTHING ELSE THE AI SHOULD KNOW</label>
+        <textarea id="f-aiNotes" placeholder="Ej. Mencionar siempre el cenote privado, no prometer descuentos...">${d.aiNotes||''}</textarea>
+      </div>`;
+
+    default: return '';
+  }
+}
+
+function renderSeasonRows() {
+  const seasons = formData.seasons || [{ name:'', rate:'', minNights:'', notes:'' }];
+  return seasons.map((s, i) => `
+    <div class="season-row" id="season-${i}">
+      <div>
+        ${i===0?'<label>SEASON NAME</label>':''}
+        <input type="text" id="sn-${i}" value="${s.name||''}" placeholder="Ej. Alta, Baja, Navidad">
+      </div>
+      <div>
+        ${i===0?'<label>RATE / NIGHT</label>':''}
+        <input type="number" id="sr-${i}" value="${s.rate||''}" placeholder="$180">
+      </div>
+      <div>
+        ${i===0?'<label>MIN NIGHTS</label>':''}
+        <input type="number" id="sm-${i}" value="${s.minNights||''}" placeholder="2">
+      </div>
+      <div style="display:flex;align-items:${i===0?'flex-end':'center'};padding-bottom:${i===0?'0':''}">
+        ${i===0?'<label style="opacity:0">X</label>':''}
+        ${i > 0 ? `<button class="remove-btn" onclick="removeSeason(${i})">×</button>` : '<div style="width:32px"></div>'}
+      </div>
+    </div>`).join('');
+}
+
+function renderPolicyRow(id, label, placeholder) {
+  const d = formData;
+  const val = (d.policies||{})[id] || '';
+  return `
+    <div class="policy-row">
+      <label>
+        <div class="policy-toggle${val?'':''}" id="tog-${id}" onclick="togglePolicy('${id}')"></div>
+        ${label}
+      </label>
+      <textarea class="policy-text-input" id="pol-${id}" placeholder="${placeholder}">${val}</textarea>
+    </div>`;
+}
+
+// ── LISTENERS ────────────────────────────────────────────
+function attachListeners(stepId) {
+  document.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => p.classList.toggle('selected'));
+  });
+}
+
+function toggleUpsell(id) {
+  const ck = document.getElementById('ck-' + id);
+  const inp = document.getElementById('up-' + id);
+  inp.disabled = !ck.checked;
+  if (!ck.checked) inp.value = '';
+}
+
+function toggleEsc(id) {
+  const el = document.getElementById('esc-' + id);
+  const cb = el.querySelector('input[type="checkbox"]');
+  el.classList.toggle('active');
+  cb.checked = el.classList.contains('active');
+}
+
+function togglePolicy(id) {
+  const tog = document.getElementById('tog-' + id);
+  tog.classList.toggle('on');
+}
+
+function addSeason() {
+  const seasons = collectSeasons();
+  seasons.push({ name:'', rate:'', minNights:'', notes:'' });
+  formData.seasons = seasons;
+  document.getElementById('seasons-container').innerHTML = renderSeasonRows();
+}
+
+function removeSeason(i) {
+  const seasons = collectSeasons();
+  seasons.splice(i, 1);
+  formData.seasons = seasons;
+  document.getElementById('seasons-container').innerHTML = renderSeasonRows();
+}
+
+function collectSeasons() {
+  const seasons = [];
+  let i = 0;
+  while (document.getElementById('sn-' + i)) {
+    seasons.push({
+      name: document.getElementById('sn-' + i).value,
+      rate: document.getElementById('sr-' + i).value,
+      minNights: document.getElementById('sm-' + i).value,
+    });
+    i++;
+  }
+  return seasons;
+}
+
+// ── SAVE ─────────────────────────────────────────────────
+function saveStep() {
+  const id = STEPS[currentStep].id;
+
+  if (id === 'info') {
+    ['propName','city','country','address','bedrooms','bathrooms','maxGuests',
+     'checkin','checkout','wifiName','wifiPass'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
+    formData.languages = [...document.querySelectorAll('[data-group="languages"].selected')].map(p => p.dataset.val);
+  }
+
+  if (id === 'rates') {
+    formData.seasons = collectSeasons();
+    ['minNights','deposit','currency'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
+  }
+
+  if (id === 'amenities') {
+    formData.amenities = [...document.querySelectorAll('[data-group="amenities"].selected')].map(p => p.dataset.val);
+    const ex = document.getElementById('f-amenitiesExtra');
+    const nb = document.getElementById('f-nearestBeach');
+    if (ex) formData.amenitiesExtra = ex.value;
+    if (nb) formData.nearestBeach = nb.value;
+  }
+
+  if (id === 'policies') {
+    formData.policies = {};
+    ['cancellation','smoking','pets','parties','extraGuests','earlyCheckin','lateCheckout'].forEach(p => {
+      const el = document.getElementById('pol-' + p);
+      if (el) formData.policies[p] = el.value;
+    });
+    const op = document.getElementById('f-otherPolicies');
+    if (op) formData.otherPolicies = op.value;
+  }
+
+  if (id === 'upsells') {
+    formData.upsells = {};
+    UPSELLS.forEach(u => {
+      const ck = document.getElementById('ck-' + u.id);
+      const inp = document.getElementById('up-' + u.id);
+      if (ck && ck.checked && inp && inp.value) {
+        formData.upsells[u.id] = { price: parseFloat(inp.value), unit: u.unit, label: u.label };
+      }
+    });
+    const ue = document.getElementById('f-upsellExtra');
+    if (ue) formData.upsellExtra = ue.value;
+  }
+
+  if (id === 'escalation') {
+    formData.escalation = [...document.querySelectorAll('.esc-item.active')].map(el =>
+      el.id.replace('esc-', '')
+    );
+    const rt = document.getElementById('f-responseTime');
+    if (rt) formData.responseTime = rt.value;
+  }
+
+  if (id === 'contact') {
+    ['ownerName','ownerWhatsapp','ownerEmail','propertyWhatsapp','propertyPhone2','propertyPhone3','tone','primaryLang','aiNotes'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
+  }
+}
+
+// ── NAV ──────────────────────────────────────────────────
+function goNext() {
+  saveStep();
+  if (currentStep === STEPS.length - 1) {
+    submitForm();
+  } else {
+    currentStep++;
+    renderStep();
+    window.scrollTo(0, 0);
+  }
+}
+
+function goBack() {
+  saveStep();
+  currentStep--;
+  renderStep();
+  window.scrollTo(0, 0);
+}
+
+// ── SUBMIT ───────────────────────────────────────────────
+function submitForm() {
+  const payload = { ...formData, submittedAt: new Date().toISOString() };
+
+  if (MAKE_WEBHOOK_URL) {
+    fetch(MAKE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  }
+
+  showDone(payload);
+}
+
+function showDone(d) {
+  const upsellCount = Object.keys(d.upsells || {}).length;
+  const escCount = (d.escalation || []).length;
+  const seasonCount = (d.seasons || []).filter(s => s.name).length;
+
+  document.getElementById('done-summary').innerHTML = `
+    <div class="done-row"><span>Property</span><span>${d.propName || '—'}</span></div>
+    <div class="done-row"><span>Location</span><span>${d.city || '—'}, ${d.country || '—'}</span></div>
+    <div class="done-row"><span>Seasons configured</span><span>${seasonCount}</span></div>
+    <div class="done-row"><span>Upsells enabled</span><span>${upsellCount}</span></div>
+    <div class="done-row"><span>Escalation triggers</span><span>${escCount}</span></div>
+    <div class="done-row"><span>AI response language</span><span>${d.primaryLang || 'Both'}</span></div>
+    <div class="done-row"><span>Owner WhatsApp</span><span>${d.ownerWhatsapp || '—'}</span></div>
+  `;
+
+  document.getElementById('screen-form').classList.remove('active');
+  document.getElementById('screen-done').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function restart() {
+  currentStep = 0;
+  formData = {};
+  document.getElementById('screen-done').classList.remove('active');
+  document.getElementById('screen-form').classList.add('active');
+  renderStep();
+  window.scrollTo(0, 0);
+}
+
+// ── INIT ─────────────────────────────────────────────────
+renderStep();
+</script>
+</body>
+</html>
