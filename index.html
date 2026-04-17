@@ -3,22 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Property Intake — WhyNot Automate</title>
+<title>Property Setup — Lani</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --purple-deep: #26215C;
-    --purple-brand: #534AB7;
-    --purple-light: #EEEDFE;
-    --purple-mid: #AFA9EC;
-    --white: #ffffff;
-    --off-white: #F7F6FF;
-    --gray-text: #6B6B80;
-    --gray-border: #E2E1F0;
-    --red: #E24B4A;
-    --green: #1D9E75;
-    --font-display: 'DM Serif Display', Georgia, serif;
+    --sand: #F5F0E8;
+    --sand-dark: #EDE6D6;
+    --sand-deeper: #D9CDB8;
+    --ocean: #1A5F7A;
+    --ocean-light: #2B8BA8;
+    --ocean-pale: #E8F4F8;
+    --green: #2D6A4F;
+    --green-light: #40916C;
+    --green-pale: #E8F5EE;
+    --coral: #C0714A;
+    --coral-light: #E8956D;
+    --warm-dark: #2C2416;
+    --warm-mid: #6B5B45;
+    --warm-light: #9C8B72;
+    --white: #FDFAF5;
+    --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'DM Sans', sans-serif;
   }
 
@@ -26,189 +31,251 @@
 
   body {
     font-family: var(--font-body);
-    background: var(--purple-deep);
-    color: var(--white);
+    background: var(--sand);
+    color: var(--warm-dark);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
+  /* Subtle texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
   header {
     width: 100%;
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid var(--sand-deeper);
+    background: var(--white);
+    position: relative;
+    z-index: 1;
   }
 
-  .logo { display: flex; align-items: baseline; gap: 10px; }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--ocean);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--white);
+    font-style: italic;
+  }
 
   .wordmark {
     font-family: var(--font-display);
-    font-size: 20px;
-    letter-spacing: 0.1em;
-    color: var(--white);
+    font-size: 18px;
+    color: var(--warm-dark);
+    letter-spacing: 0.02em;
   }
 
   .tagline {
     font-size: 11px;
-    color: var(--purple-mid);
+    color: var(--warm-light);
     letter-spacing: 0.06em;
     font-weight: 300;
   }
 
-  .powered-by {
+  .header-right {
     font-size: 11px;
-    color: rgba(255,255,255,0.35);
+    color: var(--warm-light);
     font-weight: 300;
     letter-spacing: 0.04em;
   }
-  .powered-by span { color: var(--purple-mid); font-weight: 500; }
 
   main {
     width: 100%;
-    max-width: 560px;
-    padding: 2rem 1.5rem 4rem;
+    max-width: 580px;
+    padding: 2rem 1.5rem 5rem;
     flex: 1;
+    position: relative;
+    z-index: 1;
   }
 
   .screen { display: none; }
   .screen.active { display: block; }
 
   /* Progress */
-  .progress-bar { display: flex; gap: 5px; margin-bottom: 2rem; }
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-bar { display: flex; gap: 4px; margin-bottom: 8px; }
   .progress-seg {
-    height: 3px; flex: 1; border-radius: 2px;
-    background: rgba(255,255,255,0.1);
-    transition: background 0.3s;
+    height: 2px; flex: 1; border-radius: 2px;
+    background: var(--sand-deeper);
+    transition: background 0.4s;
   }
-  .progress-seg.done { background: var(--purple-brand); }
+  .progress-seg.done { background: var(--ocean); }
+  .progress-label {
+    font-size: 11px;
+    color: var(--warm-light);
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
 
   /* Step header */
-  .step-header { margin-bottom: 1.75rem; }
+  .step-header { margin-bottom: 2rem; }
   .step-number {
-    font-size: 11px; letter-spacing: 0.1em;
-    color: var(--purple-mid); font-weight: 500; margin-bottom: 6px;
+    font-size: 11px; letter-spacing: 0.12em;
+    color: var(--ocean); font-weight: 500; margin-bottom: 8px;
+    text-transform: uppercase;
   }
   h2 {
     font-family: var(--font-display);
-    font-size: 26px; font-weight: 400;
-    color: var(--white); line-height: 1.2; margin-bottom: 6px;
+    font-size: 28px; font-weight: 400;
+    color: var(--warm-dark); line-height: 1.25; margin-bottom: 8px;
   }
+  h2 em { font-style: italic; color: var(--ocean); }
   .step-sub {
-    font-size: 13px; color: rgba(255,255,255,0.45); font-weight: 300;
+    font-size: 13px; color: var(--warm-light); font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* Card wrapper */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--sand-deeper);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   /* Fields */
   .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
   .field label {
-    display: block; font-size: 12px; letter-spacing: 0.05em;
-    color: var(--purple-mid); font-weight: 500; margin-bottom: 6px;
+    display: block; font-size: 11px; letter-spacing: 0.08em;
+    color: var(--warm-mid); font-weight: 600; margin-bottom: 6px;
+    text-transform: uppercase;
   }
   .field input,
   .field select,
   .field textarea {
     width: 100%; padding: 11px 14px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--sand);
+    border: 1px solid var(--sand-deeper);
     border-radius: 10px; font-size: 14px;
-    color: var(--white); font-family: var(--font-body);
-    font-weight: 400; transition: border 0.2s; outline: none;
+    color: var(--warm-dark); font-family: var(--font-body);
+    font-weight: 400; transition: border 0.2s, background 0.2s; outline: none;
   }
   .field textarea { resize: vertical; min-height: 80px; }
   .field input::placeholder,
-  .field textarea::placeholder { color: rgba(255,255,255,0.25); }
+  .field textarea::placeholder { color: var(--sand-deeper); }
   .field input:focus,
   .field select:focus,
   .field textarea:focus {
-    border-color: var(--purple-brand);
-    background: rgba(83,74,183,0.12);
+    border-color: var(--ocean);
+    background: var(--ocean-pale);
   }
-  .field select option { background: var(--purple-deep); }
+  .field select option { background: var(--white); color: var(--warm-dark); }
 
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* Section label */
+  .section-label {
+    font-size: 10px; letter-spacing: 0.12em;
+    color: var(--warm-mid); font-weight: 700;
+    margin: 1.5rem 0 0.75rem;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--sand-deeper);
+  }
 
   /* Pills */
   .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
   .pill {
     padding: 7px 14px;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid var(--sand-deeper);
     border-radius: 999px; font-size: 13px;
-    color: rgba(255,255,255,0.55);
+    color: var(--warm-mid); background: var(--sand);
     cursor: pointer; transition: all 0.15s; user-select: none;
   }
+  .pill:hover { border-color: var(--ocean-light); color: var(--ocean); }
   .pill.selected {
-    background: var(--purple-brand);
-    border-color: var(--purple-brand);
+    background: var(--ocean);
+    border-color: var(--ocean);
     color: var(--white);
   }
 
-  /* Season rows */
+  /* Season / room rows */
   .season-row {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 0.7fr;
-    gap: 8px;
-    align-items: end;
-    margin-bottom: 10px;
+    grid-template-columns: 1.6fr 1fr 1fr 0.5fr;
+    gap: 8px; align-items: end; margin-bottom: 10px;
   }
   .season-row label {
-    font-size: 11px; letter-spacing: 0.05em;
-    color: var(--purple-mid); font-weight: 500;
+    font-size: 10px; letter-spacing: 0.08em;
+    color: var(--warm-mid); font-weight: 600;
+    text-transform: uppercase;
     display: block; margin-bottom: 4px;
   }
   .season-row input, .season-row select {
     width: 100%; padding: 9px 11px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--sand);
+    border: 1px solid var(--sand-deeper);
     border-radius: 8px; font-size: 13px;
-    color: var(--white); font-family: var(--font-body);
+    color: var(--warm-dark); font-family: var(--font-body);
     outline: none; transition: border 0.2s;
   }
   .season-row input:focus, .season-row select:focus {
-    border-color: var(--purple-brand);
-    background: rgba(83,74,183,0.12);
+    border-color: var(--ocean); background: var(--ocean-pale);
   }
-  .season-row select option { background: var(--purple-deep); }
+  .season-row select option { background: var(--white); }
 
-  .add-season-btn {
+  .add-btn {
     background: transparent;
-    border: 1px dashed rgba(255,255,255,0.2);
-    border-radius: 8px; color: rgba(255,255,255,0.4);
+    border: 1.5px dashed var(--sand-deeper);
+    border-radius: 10px; color: var(--warm-light);
     font-size: 13px; font-family: var(--font-body);
-    padding: 9px 14px; cursor: pointer; width: 100%;
-    margin-top: 4px; transition: all 0.2s;
+    padding: 10px 14px; cursor: pointer; width: 100%;
+    margin-top: 4px; transition: all 0.2s; text-align: center;
   }
-  .add-season-btn:hover {
-    border-color: var(--purple-brand);
-    color: var(--purple-mid);
-  }
+  .add-btn:hover { border-color: var(--ocean); color: var(--ocean); }
 
   .remove-btn {
     background: transparent; border: none;
-    color: rgba(255,255,255,0.2); font-size: 18px;
-    cursor: pointer; padding: 0 4px; line-height: 1;
+    color: var(--sand-deeper); font-size: 18px;
+    cursor: pointer; padding: 0; line-height: 1;
     transition: color 0.15s;
   }
-  .remove-btn:hover { color: var(--red); }
+  .remove-btn:hover { color: var(--coral); }
 
   /* Policy rows */
-  .policy-row { margin-bottom: 1rem; }
+  .policy-row { margin-bottom: 0.875rem; }
   .policy-row label {
-    font-size: 12px; letter-spacing: 0.05em;
-    color: var(--purple-mid); font-weight: 500;
+    font-size: 11px; letter-spacing: 0.07em;
+    color: var(--warm-dark); font-weight: 600;
     margin-bottom: 5px; display: flex;
-    align-items: center; gap: 8px;
+    align-items: center; gap: 10px;
+    text-transform: uppercase;
   }
   .policy-toggle {
     width: 34px; height: 20px; border-radius: 999px;
-    background: rgba(255,255,255,0.15);
+    background: var(--sand-deeper);
     position: relative; cursor: pointer;
     transition: background 0.2s; flex-shrink: 0;
   }
-  .policy-toggle.on { background: var(--purple-brand); }
+  .policy-toggle.on { background: var(--green); }
   .policy-toggle::after {
     content: ''; position: absolute;
     width: 14px; height: 14px; border-radius: 50%;
@@ -218,17 +285,14 @@
   .policy-toggle.on::after { transform: translateX(14px); }
   .policy-text-input {
     width: 100%; padding: 9px 12px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--sand);
+    border: 1px solid var(--sand-deeper);
     border-radius: 8px; font-size: 13px;
-    color: var(--white); font-family: var(--font-body);
+    color: var(--warm-dark); font-family: var(--font-body);
     outline: none; margin-top: 6px; transition: border 0.2s;
   }
-  .policy-text-input:focus {
-    border-color: var(--purple-brand);
-    background: rgba(83,74,183,0.12);
-  }
-  .policy-text-input::placeholder { color: rgba(255,255,255,0.2); }
+  .policy-text-input:focus { border-color: var(--ocean); background: var(--ocean-pale); }
+  .policy-text-input::placeholder { color: var(--sand-deeper); }
 
   /* Upsell items */
   .upsell-item {
@@ -237,198 +301,230 @@
     gap: 8px; align-items: center; margin-bottom: 8px;
   }
   .upsell-item label {
-    font-size: 13px; color: rgba(255,255,255,0.7);
+    font-size: 13px; color: var(--warm-mid);
     display: flex; align-items: center; gap: 8px; cursor: pointer;
   }
   .upsell-item input[type="checkbox"] {
     width: 16px; height: 16px;
-    accent-color: var(--purple-brand);
+    accent-color: var(--ocean);
     cursor: pointer; flex-shrink: 0;
   }
   .upsell-sub-input {
     padding: 7px 10px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--sand);
+    border: 1px solid var(--sand-deeper);
     border-radius: 8px; font-size: 13px;
-    color: var(--white); font-family: var(--font-body);
-    outline: none; width: 100%;
+    color: var(--warm-dark); font-family: var(--font-body);
+    outline: none; width: 100%; transition: border 0.2s;
   }
-  .upsell-sub-input:focus { border-color: var(--purple-brand); }
-  .upsell-sub-input:disabled { opacity: 0.2; cursor: not-allowed; }
-  .upsell-unit {
-    font-size: 11px; color: rgba(255,255,255,0.3);
-    text-align: center;
-  }
+  .upsell-sub-input:focus { border-color: var(--ocean); }
+  .upsell-sub-input:disabled { opacity: 0.3; cursor: not-allowed; }
+  .upsell-unit { font-size: 11px; color: var(--warm-light); text-align: center; }
 
-  /* Escalation */
+  /* Escalation items */
   .esc-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px; margin-bottom: 8px;
-    font-size: 13px; color: rgba(255,255,255,0.7);
+    padding: 11px 14px;
+    background: var(--sand);
+    border: 1px solid var(--sand-deeper);
+    border-radius: 10px; margin-bottom: 8px;
+    font-size: 13px; color: var(--warm-mid);
     cursor: pointer; transition: all 0.15s;
   }
+  .esc-item:hover { border-color: var(--ocean-light); }
   .esc-item.active {
-    background: rgba(83,74,183,0.2);
-    border-color: var(--purple-brand);
-    color: var(--white);
+    background: var(--ocean-pale);
+    border-color: var(--ocean);
+    color: var(--warm-dark);
   }
   .esc-item input[type="checkbox"] {
     width: 16px; height: 16px;
-    accent-color: var(--purple-brand); flex-shrink: 0;
-  }
-
-  /* Section divider */
-  .section-label {
-    font-size: 11px; letter-spacing: 0.1em;
-    color: var(--purple-mid); font-weight: 500;
-    margin: 1.25rem 0 0.75rem;
-    text-transform: uppercase;
+    accent-color: var(--ocean); flex-shrink: 0;
   }
 
   /* Buttons */
   .btn-primary {
     width: 100%; padding: 14px;
-    background: var(--purple-brand); color: var(--white);
+    background: var(--ocean); color: var(--white);
     border: none; border-radius: 12px;
     font-size: 15px; font-weight: 500;
     font-family: var(--font-body); cursor: pointer;
     margin-top: 1.5rem; transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.01em;
   }
-  .btn-primary:hover { background: #3C3489; }
+  .btn-primary:hover { background: var(--ocean-light); }
   .btn-primary:active { transform: scale(0.98); }
 
   .btn-back {
     padding: 14px 20px;
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 12px; color: rgba(255,255,255,0.6);
+    border: 1px solid var(--sand-deeper);
+    border-radius: 12px; color: var(--warm-light);
     font-size: 15px; font-family: var(--font-body);
-    cursor: pointer; transition: border 0.2s;
+    cursor: pointer; transition: all 0.2s;
   }
-  .btn-back:hover { border-color: rgba(255,255,255,0.3); }
+  .btn-back:hover { border-color: var(--warm-light); color: var(--warm-mid); }
 
   .btn-row { display: flex; gap: 10px; align-items: center; margin-top: 1.5rem; }
   .btn-row .btn-primary { margin-top: 0; flex: 1; }
 
   /* Done screen */
+  .done-wrap {
+    text-align: center;
+    padding: 2rem 0;
+  }
   .done-icon {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: rgba(29,158,117,0.15);
-    border: 1px solid rgba(29,158,117,0.3);
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--green-pale);
+    border: 1px solid rgba(45,106,79,0.2);
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 1.5rem;
-    font-size: 28px;
+    font-size: 30px;
   }
   .done-title {
     font-family: var(--font-display);
-    font-size: 30px; font-weight: 400;
-    text-align: center; margin-bottom: 8px;
+    font-size: 32px; font-weight: 400;
+    color: var(--warm-dark);
+    margin-bottom: 10px; line-height: 1.2;
   }
+  .done-title em { font-style: italic; color: var(--green); }
   .done-sub {
-    font-size: 14px; color: rgba(255,255,255,0.45);
-    text-align: center; font-weight: 300;
-    line-height: 1.6; margin-bottom: 2rem;
+    font-size: 14px; color: var(--warm-light);
+    font-weight: 300; line-height: 1.7;
+    margin-bottom: 2rem; max-width: 380px; margin-left: auto; margin-right: auto;
   }
   .done-summary {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px; padding: 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--sand-deeper);
+    border-radius: 16px; padding: 1.25rem;
+    text-align: left;
   }
   .done-row {
     display: flex; justify-content: space-between;
-    font-size: 13px; padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px; padding: 8px 0;
+    border-bottom: 1px solid var(--sand);
   }
   .done-row:last-child { border-bottom: none; }
-  .done-row span:first-child { color: rgba(255,255,255,0.45); }
-  .done-row span:last-child { font-weight: 500; }
+  .done-row span:first-child { color: var(--warm-light); }
+  .done-row span:last-child { font-weight: 500; color: var(--warm-dark); }
+
+  /* Info badge */
+  .info-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--ocean-pale);
+    border: 1px solid rgba(26,95,122,0.15);
+    border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; color: var(--ocean);
+    margin-bottom: 1rem; font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Url row */
+  .url-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 0.5fr;
+    gap: 8px; align-items: end; margin-bottom: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .season-row { grid-template-columns: 1fr 1fr 0.5fr; }
+    .upsell-item { grid-template-columns: 1fr 0.7fr 0.6fr; }
+    h2 { font-size: 24px; }
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <span class="wordmark">WhyNot Automate</span>
-    <span class="tagline">AI Guest Messaging Setup</span>
+    <div class="logo-mark"><em>L</em></div>
+    <div>
+      <div class="wordmark">Lani</div>
+    </div>
   </div>
-  <span class="powered-by">property <span>knowledge base</span></span>
+  <span class="header-right">Property Knowledge Base</span>
 </header>
 
 <main>
   <div id="screen-form" class="screen active">
-    <div class="progress-bar" id="progress-bar"></div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+      <div class="progress-label" id="progress-label"></div>
+    </div>
     <div id="form-content"></div>
   </div>
 
   <div id="screen-done" class="screen">
-    <div class="done-icon">✓</div>
-    <h2 class="done-title">Property registered.</h2>
-    <p class="done-sub">Tu knowledge base está lista. El sistema de mensajería<br>WhatsApp AI ya tiene todo lo que necesita.</p>
-    <div class="done-summary" id="done-summary"></div>
-    <button class="btn-primary" style="margin-top:1.5rem" onclick="restart()">Register another property →</button>
+    <div class="done-wrap">
+      <div class="done-icon">✓</div>
+      <h2 class="done-title">Property <em>registered.</em></h2>
+      <p class="done-sub">Your knowledge base is ready. Lani now has everything she needs to represent your property — 24 hours a day.</p>
+      <div class="done-summary" id="done-summary"></div>
+      <button class="btn-primary" style="margin-top:1.5rem" onclick="restart()">Register another property →</button>
+    </div>
   </div>
 </main>
 
 <script>
 const MAKE_WEBHOOK_URL = 'https://hook.us2.make.com/hy64e8c7g9ire3vos1ylm3de2x1ft9y6';
 
-// ── DATA ────────────────────────────────────────────────
 let currentStep = 0;
 let formData = {};
-let seasonRows = 1;
 
 const AMENITIES = [
-  'Alberca privada','Alberca compartida','Jacuzzi','Playa privada','Vista al mar',
-  'Vista a la montaña','Jardín','Terraza/Rooftop','Estacionamiento','Gym',
-  'Cocina equipada','Parrilla/BBQ','Sala de juegos','Cine en casa','Pet friendly'
+  'Private pool','Shared pool','Jacuzzi','Private beach','Ocean view',
+  'Mountain view','Garden','Terrace/Rooftop','Parking','Gym',
+  'Full kitchen','BBQ/Grill','Game room','Home theater','Pet friendly',
+  'Surf equipment','Kayak/Water gear','Dive equipment','Yoga space'
 ];
 
-const LANGUAGES = ['Español','English','Português','Français','Deutsch'];
+const LANGUAGES = ['English','Español','Português','Français','Deutsch','Filipino/Tagalog'];
 
 const UPSELLS = [
-  { id:'transfer', label:'Transfer aeropuerto', unit:'por viaje' },
-  { id:'breakfast', label:'Desayuno diario', unit:'por persona/día' },
-  { id:'chef', label:'Chef privado', unit:'por cena' },
-  { id:'massage', label:'Masaje in-house', unit:'por sesión' },
-  { id:'tour', label:'Tour / excursión', unit:'por persona' },
-  { id:'groceries', label:'Despensa pre-llegada', unit:'por pedido' },
-  { id:'kayak', label:'Kayak / equipo acuático', unit:'por día' },
-  { id:'babysitter', label:'Babysitter', unit:'por hora' },
-  { id:'yoga', label:'Clase de yoga', unit:'por sesión' },
-  { id:'cleaning', label:'Limpieza extra', unit:'por servicio' },
+  { id:'transfer', label:'Airport transfer', unit:'per trip' },
+  { id:'breakfast', label:'Daily breakfast', unit:'per person/day' },
+  { id:'chef', label:'Private chef dinner', unit:'per dinner' },
+  { id:'massage', label:'In-room massage', unit:'per session' },
+  { id:'tour', label:'Tour / excursion', unit:'per person' },
+  { id:'groceries', label:'Pre-arrival groceries', unit:'per order' },
+  { id:'kayak', label:'Kayak / water gear', unit:'per day' },
+  { id:'babysitter', label:'Babysitter', unit:'per hour' },
+  { id:'yoga', label:'Yoga class', unit:'per session' },
+  { id:'cleaning', label:'Extra cleaning', unit:'per service' },
+  { id:'surflesson', label:'Surf lesson', unit:'per session' },
+  { id:'diving', label:'Diving trip', unit:'per person' },
 ];
 
 const ESC_TRIGGERS = [
-  { id:'long_stay', label:'Estancia de 7+ noches' },
-  { id:'large_group', label:'Grupo de 5+ personas' },
-  { id:'discount', label:'Solicitud de descuento' },
-  { id:'peak_dates', label:'Fechas en temporada alta' },
-  { id:'availability', label:'Consulta de disponibilidad exacta' },
-  { id:'special_request', label:'Petición especial / fuera de lo normal' },
-  { id:'complaint', label:'Queja o problema urgente' },
-  { id:'group_event', label:'Evento o celebración en el property' },
+  { id:'long_stay', label:'Stay of 7+ nights' },
+  { id:'large_group', label:'Group of 5+ people' },
+  { id:'discount', label:'Discount request' },
+  { id:'peak_dates', label:'Peak season booking' },
+  { id:'availability', label:'Exact availability check' },
+  { id:'special_request', label:'Special / unusual request' },
+  { id:'complaint', label:'Complaint or urgent issue' },
+  { id:'group_event', label:'Event or celebration at property' },
 ];
 
-// ── STEPS ───────────────────────────────────────────────
 const STEPS = [
-  { id: 'info', title: 'Tell us about your property.', sub: 'Basic info the AI will use to introduce itself.' },
-  { id: 'rates', title: 'Rates & availability.', sub: 'Set your seasons and nightly rates.' },
-  { id: 'amenities', title: 'What does your property offer?', sub: 'Select all amenities guests can expect.' },
-  { id: 'policies', title: 'House rules & policies.', sub: 'The AI will communicate these clearly to every guest.' },
-  { id: 'upsells', title: 'Upsells & add-on services.', sub: 'What can guests add to their stay?' },
-  { id: 'escalation', title: 'When should we alert you?', sub: 'The AI handles the rest — these go straight to your WhatsApp.' },
-  { id: 'contact', title: 'Owner contact & voice.', sub: 'How the AI should sound, and where to reach you.' },
+  { id: 'info', title: 'Tell us about your <em>property.</em>', sub: 'Basic info Lani will use to introduce your property to every guest.' },
+  { id: 'rates', title: 'Rates & <em>availability.</em>', sub: 'Set your seasons and nightly rates.' },
+  { id: 'booking', title: 'Booking links & <em>room pricing.</em>', sub: 'Where guests can book and how much each room type costs.' },
+  { id: 'amenities', title: 'What does your property <em>offer?</em>', sub: 'Select all amenities your guests can expect.' },
+  { id: 'policies', title: 'House rules & <em>policies.</em>', sub: 'Lani will communicate these clearly to every guest.' },
+  { id: 'upsells', title: 'Upsells & <em>add-on services.</em>', sub: 'What can guests add to their stay?' },
+  { id: 'escalation', title: 'When should we <em>alert you?</em>', sub: 'Lani handles everything else — these go straight to your WhatsApp.' },
+  { id: 'contact', title: 'Owner contact & <em>voice.</em>', sub: 'How Lani should sound, and where to reach you.' },
 ];
 
-// ── RENDER ──────────────────────────────────────────────
 function renderProgress() {
   const bar = document.getElementById('progress-bar');
+  const label = document.getElementById('progress-label');
   bar.innerHTML = STEPS.map((_, i) =>
-    `<div class="progress-seg ${i < currentStep ? 'done' : i === currentStep ? 'done' : ''}"></div>`
+    `<div class="progress-seg ${i <= currentStep ? 'done' : ''}"></div>`
   ).join('');
+  label.textContent = `Step ${currentStep + 1} of ${STEPS.length} — ${STEPS[currentStep].id.charAt(0).toUpperCase() + STEPS[currentStep].id.slice(1)}`;
 }
 
 function renderStep() {
@@ -437,20 +533,17 @@ function renderStep() {
   const isLast = currentStep === STEPS.length - 1;
   let html = `
     <div class="step-header">
-      <div class="step-number">STEP ${currentStep + 1} OF ${STEPS.length}</div>
+      <div class="step-number">Step ${currentStep + 1} / ${STEPS.length}</div>
       <h2>${step.title}</h2>
       <p class="step-sub">${step.sub}</p>
-    </div>`;
-
-  html += renderStepContent(step.id);
-
-  const backBtn = currentStep > 0
-    ? `<button class="btn-back" onclick="goBack()">← Back</button>` : '';
-  html += `<div class="btn-row">
-    ${backBtn}
-    <button class="btn-primary" onclick="goNext()">${isLast ? 'Finish & save →' : 'Next →'}</button>
-  </div>`;
-
+    </div>
+    <div class="card">
+      ${renderStepContent(step.id)}
+    </div>
+    ${currentStep > 0
+      ? `<div class="btn-row"><button class="btn-back" onclick="goBack()">← Back</button><button class="btn-primary" onclick="goNext()">${isLast ? 'Complete setup →' : 'Continue →'}</button></div>`
+      : `<button class="btn-primary" onclick="goNext()">Get started →</button>`
+    }`;
   document.getElementById('form-content').innerHTML = html;
   attachListeners(step.id);
 }
@@ -461,120 +554,154 @@ function renderStepContent(id) {
 
     case 'info': return `
       <div class="field">
-        <label>PROPERTY NAME</label>
-        <input type="text" id="f-propName" value="${d.propName||''}" placeholder="Ej. Casa Azul Tulum">
+        <label>Property name</label>
+        <input type="text" id="f-propName" value="${d.propName||''}" placeholder="e.g. Casa Paloma Siargao">
       </div>
       <div class="grid2">
         <div class="field">
-          <label>CITY</label>
-          <input type="text" id="f-city" value="${d.city||''}" placeholder="Tulum">
+          <label>City / Island</label>
+          <input type="text" id="f-city" value="${d.city||''}" placeholder="General Luna">
         </div>
         <div class="field">
-          <label>COUNTRY</label>
-          <input type="text" id="f-country" value="${d.country||''}" placeholder="México">
+          <label>Country</label>
+          <input type="text" id="f-country" value="${d.country||''}" placeholder="Philippines">
         </div>
       </div>
       <div class="field">
-        <label>FULL ADDRESS</label>
-        <input type="text" id="f-address" value="${d.address||''}" placeholder="Calle Centauro Sur 142, Tulum, QR">
+        <label>Full address</label>
+        <input type="text" id="f-address" value="${d.address||''}" placeholder="Barangay Union, General Luna, Siargao Island">
       </div>
       <div class="grid3">
         <div class="field">
-          <label>BEDROOMS</label>
-          <input type="number" id="f-bedrooms" value="${d.bedrooms||''}" placeholder="3">
+          <label>Bedrooms / Units</label>
+          <input type="number" id="f-bedrooms" value="${d.bedrooms||''}" placeholder="12">
         </div>
         <div class="field">
-          <label>BATHROOMS</label>
-          <input type="number" id="f-bathrooms" value="${d.bathrooms||''}" placeholder="2">
+          <label>Bathrooms</label>
+          <input type="number" id="f-bathrooms" value="${d.bathrooms||''}" placeholder="12">
         </div>
         <div class="field">
-          <label>MAX GUESTS</label>
-          <input type="number" id="f-maxGuests" value="${d.maxGuests||''}" placeholder="6">
+          <label>Max guests</label>
+          <input type="number" id="f-maxGuests" value="${d.maxGuests||''}" placeholder="24">
         </div>
       </div>
       <div class="grid2">
         <div class="field">
-          <label>CHECK-IN TIME</label>
-          <input type="time" id="f-checkin" value="${d.checkin||'15:00'}">
+          <label>Check-in time</label>
+          <input type="time" id="f-checkin" value="${d.checkin||'14:00'}">
         </div>
         <div class="field">
-          <label>CHECK-OUT TIME</label>
+          <label>Check-out time</label>
           <input type="time" id="f-checkout" value="${d.checkout||'11:00'}">
         </div>
       </div>
-      <div class="field">
-        <label>WIFI NAME</label>
-        <input type="text" id="f-wifiName" value="${d.wifiName||''}" placeholder="CasaAzul_Guest">
+      <div class="grid2">
+        <div class="field">
+          <label>WiFi name</label>
+          <input type="text" id="f-wifiName" value="${d.wifiName||''}" placeholder="CasaPaloma_WiFi">
+        </div>
+        <div class="field">
+          <label>WiFi password</label>
+          <input type="text" id="f-wifiPass" value="${d.wifiPass||''}" placeholder="paloma2024">
+        </div>
       </div>
       <div class="field">
-        <label>WIFI PASSWORD</label>
-        <input type="text" id="f-wifiPass" value="${d.wifiPass||''}" placeholder="tulum2024">
-      </div>
-      <div class="field">
-        <label>LANGUAGES SPOKEN AT PROPERTY</label>
+        <label>Languages spoken at property</label>
         <div class="pills">
           ${LANGUAGES.map(l => `<div class="pill${(d.languages||[]).includes(l)?' selected':''}" data-val="${l}" data-group="languages">${l}</div>`).join('')}
         </div>
       </div>`;
 
     case 'rates': return `
-      <div class="section-label">SEASONS & RATES</div>
-      <div id="seasons-container">
-        ${renderSeasonRows()}
-      </div>
-      <button class="add-season-btn" onclick="addSeason()">+ Add season</button>
-      <div class="section-label" style="margin-top:1.5rem">BOOKING SETTINGS</div>
+      <div class="section-label">Seasons & rates</div>
+      <div id="seasons-container">${renderSeasonRows()}</div>
+      <button class="add-btn" onclick="addSeason()">+ Add season</button>
+      <div class="section-label">Booking settings</div>
       <div class="grid2">
         <div class="field">
-          <label>MIN NIGHTS (DEFAULT)</label>
+          <label>Min nights (default)</label>
           <input type="number" id="f-minNights" value="${d.minNights||'2'}" placeholder="2">
         </div>
         <div class="field">
-          <label>DEPOSIT REQUIRED (%)</label>
-          <input type="number" id="f-deposit" value="${d.deposit||'30'}" placeholder="30">
+          <label>Deposit required (%)</label>
+          <input type="number" id="f-deposit" value="${d.deposit||'50'}" placeholder="50">
         </div>
       </div>
       <div class="field">
-        <label>CURRENCY</label>
+        <label>Currency</label>
         <select id="f-currency">
-          ${['USD','MXN','EUR','USD/MXN'].map(c=>`<option${(d.currency||'USD')===c?' selected':''}>${c}</option>`).join('')}
+          ${['USD','PHP','MXN','EUR','AUD'].map(c=>`<option${(d.currency||'USD')===c?' selected':''}>${c}</option>`).join('')}
         </select>
+      </div>`;
+
+    case 'booking': return `
+      <div class="info-badge">💡 Lani shares these links whenever a guest asks how to book.</div>
+      <div class="section-label">Booking platforms</div>
+      <div class="field">
+        <label>Direct booking link</label>
+        <input type="url" id="f-directBookLink" value="${d.directBookLink||''}" placeholder="https://casapaloma.ph/book">
+      </div>
+      <div class="field">
+        <label>Airbnb (optional)</label>
+        <input type="url" id="f-airbnbLink" value="${d.airbnbLink||''}" placeholder="https://airbnb.com/rooms/12345678">
+      </div>
+      <div class="field">
+        <label>Booking.com (optional)</label>
+        <input type="url" id="f-bookingComLink" value="${d.bookingComLink||''}" placeholder="https://booking.com/hotel/ph/casa-paloma">
+      </div>
+      <div class="field">
+        <label>VRBO / other platform (optional)</label>
+        <input type="url" id="f-vrboLink" value="${d.vrboLink||''}" placeholder="https://vrbo.com/123456">
+      </div>
+      <div class="section-label">Room types & pricing</div>
+      <div id="rooms-container">${renderRoomRows()}</div>
+      <button class="add-btn" onclick="addRoom()">+ Add room type</button>
+      <div class="field" style="margin-top:1rem">
+        <label>Breakfast included?</label>
+        <select id="f-breakfastIncluded">
+          ${['Yes – included in all rooms','No – not included','Available as add-on'].map(b=>`<option${(d.breakfastIncluded||'')===b?' selected':''}>${b}</option>`).join('')}
+        </select>
+      </div>
+      <div class="section-label">Nearby attractions</div>
+      <div class="field">
+        <label>Top 3–5 places nearby</label>
+        <textarea id="f-nearbyAttractions" placeholder="e.g. Cloud 9 surf break (5 min), Magpupungko Rock Pools (20 min), Sugba Lagoon (30 min)">${d.nearbyAttractions||''}</textarea>
       </div>`;
 
     case 'amenities': return `
       <div class="field">
-        <label>SELECT ALL THAT APPLY</label>
+        <label>Select all that apply</label>
         <div class="pills">
           ${AMENITIES.map(a => `<div class="pill${(d.amenities||[]).includes(a)?' selected':''}" data-val="${a}" data-group="amenities">${a}</div>`).join('')}
         </div>
       </div>
       <div class="field" style="margin-top:1rem">
-        <label>OTHER AMENITIES (optional)</label>
-        <textarea id="f-amenitiesExtra" placeholder="Ej. Cenote privado, cancha de tennis...">${d.amenitiesExtra||''}</textarea>
+        <label>Other amenities (optional)</label>
+        <textarea id="f-amenitiesExtra" placeholder="e.g. Private cenote, tennis court, helipad...">${d.amenitiesExtra||''}</textarea>
       </div>
       <div class="field">
-        <label>NEAREST BEACH / ATTRACTION</label>
-        <input type="text" id="f-nearestBeach" value="${d.nearestBeach||''}" placeholder="Playa Paraíso, 8 min en auto">
+        <label>Nearest beach / main attraction</label>
+        <input type="text" id="f-nearestBeach" value="${d.nearestBeach||''}" placeholder="Cloud 9 Beach, 2-minute walk">
       </div>`;
 
     case 'policies': return `
-      ${renderPolicyRow('cancellation','CANCELLATION POLICY','Cancelación gratuita hasta 14 días antes. Después, 50% de penalización.')}
-      ${renderPolicyRow('smoking','SMOKING','No está permitido fumar dentro ni en áreas techadas.')}
-      ${renderPolicyRow('pets','PETS','No se permiten mascotas.')}
-      ${renderPolicyRow('parties','EVENTS & PARTIES','No se permiten fiestas. Ruido máximo hasta las 10 PM.')}
-      ${renderPolicyRow('extraGuests','EXTRA GUESTS','Hasta 2 adicionales con cargo de $30 USD/noche.')}
-      ${renderPolicyRow('earlyCheckin','EARLY CHECK-IN','Sujeto a disponibilidad, cargo de $40 USD. Confirmar con el owner.')}
-      ${renderPolicyRow('lateCheckout','LATE CHECK-OUT','Sujeto a disponibilidad, cargo de $40 USD. Confirmar con el owner.')}
+      ${renderPolicyRow('cancellation','Cancellation policy','Free cancellation up to 7 days before arrival. 50% penalty after that.')}
+      ${renderPolicyRow('smoking','Smoking','No smoking inside or in covered areas.')}
+      ${renderPolicyRow('pets','Pets','Pets not allowed.')}
+      ${renderPolicyRow('parties','Events & parties','No parties. Quiet hours after 10 PM.')}
+      ${renderPolicyRow('extraGuests','Extra guests','Up to 2 additional guests at $30 USD/night extra.')}
+      ${renderPolicyRow('earlyCheckin','Early check-in','Subject to availability, $40 USD fee. Confirm with owner.')}
+      ${renderPolicyRow('lateCheckout','Late check-out','Subject to availability, $40 USD fee. Confirm with owner.')}
       <div class="field" style="margin-top:1rem">
-        <label>ANY OTHER IMPORTANT RULES</label>
-        <textarea id="f-otherPolicies" placeholder="Ej. No se permiten zapatillas en la alberca...">${d.otherPolicies||''}</textarea>
+        <label>Any other important rules</label>
+        <textarea id="f-otherPolicies" placeholder="e.g. No shoes in the villa, reef-safe sunscreen only...">${d.otherPolicies||''}</textarea>
       </div>`;
 
     case 'upsells': return `
-      <div style="display:grid; grid-template-columns:1.8fr 0.8fr 0.8fr; gap:8px; margin-bottom:6px;">
-        <span style="font-size:11px;color:var(--purple-mid);letter-spacing:.05em">SERVICE</span>
-        <span style="font-size:11px;color:var(--purple-mid);letter-spacing:.05em">PRICE (USD)</span>
-        <span style="font-size:11px;color:var(--purple-mid);letter-spacing:.05em;text-align:center">UNIT</span>
+      <div style="display:grid; grid-template-columns:1.8fr 0.8fr 0.8fr; gap:8px; margin-bottom:8px;">
+        <span style="font-size:10px;color:var(--warm-light);letter-spacing:.08em;text-transform:uppercase;font-weight:500">Service</span>
+        <span style="font-size:10px;color:var(--warm-light);letter-spacing:.08em;text-transform:uppercase;font-weight:500">Price (USD)</span>
+        <span style="font-size:10px;color:var(--warm-light);letter-spacing:.08em;text-transform:uppercase;font-weight:500;text-align:center">Unit</span>
       </div>
       ${UPSELLS.map(u => {
         const saved = (d.upsells||{})[u.id];
@@ -585,18 +712,18 @@ function renderStepContent(id) {
             ${u.label}
           </label>
           <input type="number" class="upsell-sub-input" id="up-${u.id}"
-            value="${saved||''}" placeholder="$0" min="0" ${checked?'':'disabled'}>
+            value="${saved||''}" placeholder="0" min="0" ${checked?'':'disabled'}>
           <span class="upsell-unit">${u.unit}</span>
         </div>`;
       }).join('')}
       <div class="field" style="margin-top:1rem">
-        <label>OTHER SERVICES (optional)</label>
-        <textarea id="f-upsellExtra" placeholder="Ej. Renta de autos, pesca deportiva...">${d.upsellExtra||''}</textarea>
+        <label>Other services (optional)</label>
+        <textarea id="f-upsellExtra" placeholder="e.g. Car rental, sport fishing, private island day trip...">${d.upsellExtra||''}</textarea>
       </div>`;
 
     case 'escalation': return `
-      <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:1rem;font-weight:300">
-        The AI answers everything else automatically — tap to select what goes straight to you.
+      <p style="font-size:13px;color:var(--warm-light);margin-bottom:1rem;font-weight:300;line-height:1.6">
+        Lani answers everything automatically — select what should go straight to you on WhatsApp.
       </p>
       <div id="esc-list">
         ${ESC_TRIGGERS.map(e => `
@@ -606,57 +733,53 @@ function renderStepContent(id) {
           </div>`).join('')}
       </div>
       <div class="field" style="margin-top:1rem">
-        <label>OWNER RESPONSE TIME PROMISE TO GUESTS</label>
+        <label>Owner response time promise to guests</label>
         <select id="f-responseTime">
-          ${['En menos de 15 minutos','En menos de 1 hora','En menos de 2 horas','En menos de 4 horas'].map(r=>`<option${(d.responseTime||'')===r?' selected':''}>${r}</option>`).join('')}
+          ${['Within 15 minutes','Within 1 hour','Within 2 hours','Within 4 hours'].map(r=>`<option${(d.responseTime||'')===r?' selected':''}>${r}</option>`).join('')}
         </select>
       </div>`;
 
     case 'contact': return `
       <div class="field">
-        <label>OWNER / MANAGER NAME</label>
-        <input type="text" id="f-ownerName" value="${d.ownerName||''}" placeholder="Carlos Méndez">
+        <label>Owner / manager name</label>
+        <input type="text" id="f-ownerName" value="${d.ownerName||''}" placeholder="Marco Santos">
       </div>
       <div class="grid2">
         <div class="field">
-          <label>WHATSAPP (owner)</label>
-          <input type="tel" id="f-ownerWhatsapp" value="${d.ownerWhatsapp||''}" placeholder="+52 984 000 0000">
+          <label>WhatsApp (owner)</label>
+          <input type="tel" id="f-ownerWhatsapp" value="${d.ownerWhatsapp||''}" placeholder="+63 917 000 0001">
         </div>
         <div class="field">
-          <label>EMAIL</label>
+          <label>Email</label>
           <input type="email" id="f-ownerEmail" value="${d.ownerEmail||''}" placeholder="owner@email.com">
         </div>
       </div>
-      <div class="section-label">PROPERTY CONTACT NUMBERS</div>
-      <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:12px;font-weight:300">Números donde los huéspedes contactan al property. El sistema detecta mensajes de cualquiera de estos.</p>
+      <div class="section-label">Property contact numbers</div>
+      <p style="font-size:12px;color:var(--warm-light);margin-bottom:12px;font-weight:300;line-height:1.6">Numbers where guests contact your property. Lani detects messages from any of these.</p>
       <div class="field">
-        <label>WHATSAPP / PHONE NUMBER 1 (primary)</label>
-        <input type="tel" id="f-propertyWhatsapp" value="${d.propertyWhatsapp||''}" placeholder="+52 984 111 2222">
+        <label>WhatsApp / phone number 1 (primary)</label>
+        <input type="tel" id="f-propertyWhatsapp" value="${d.propertyWhatsapp||''}" placeholder="+63 917 111 2222">
       </div>
       <div class="field">
-        <label>WHATSAPP / PHONE NUMBER 2 (optional)</label>
-        <input type="tel" id="f-propertyPhone2" value="${d.propertyPhone2||''}" placeholder="+52 984 333 4444">
+        <label>WhatsApp / phone number 2 (optional)</label>
+        <input type="tel" id="f-propertyPhone2" value="${d.propertyPhone2||''}" placeholder="+63 917 333 4444">
       </div>
+      <div class="section-label">AI brand voice</div>
       <div class="field">
-        <label>WHATSAPP / PHONE NUMBER 3 (optional)</label>
-        <input type="tel" id="f-propertyPhone3" value="${d.propertyPhone3||''}" placeholder="+52 984 555 6666">
-      </div>
-      <div class="section-label">AI BRAND VOICE</div>
-      <div class="field">
-        <label>TONE</label>
+        <label>Tone</label>
         <select id="f-tone">
-          ${['Cálido y cercano','Profesional y formal','Amigable y casual','Lujoso y exclusivo'].map(t=>`<option${(d.tone||'')===t?' selected':''}>${t}</option>`).join('')}
+          ${['Warm & friendly','Professional & formal','Casual & relaxed','Luxury & exclusive'].map(t=>`<option${(d.tone||'')===t?' selected':''}>${t}</option>`).join('')}
         </select>
       </div>
       <div class="field">
-        <label>PRIMARY RESPONSE LANGUAGE</label>
+        <label>Primary response language</label>
         <select id="f-primaryLang">
-          ${['Español','English','Both (match guest)'].map(l=>`<option${(d.primaryLang||'Both (match guest)')===l?' selected':''}>${l}</option>`).join('')}
+          ${['English','Español','Both (match guest)'].map(l=>`<option${(d.primaryLang||'Both (match guest)')===l?' selected':''}>${l}</option>`).join('')}
         </select>
       </div>
       <div class="field">
-        <label>ANYTHING ELSE THE AI SHOULD KNOW</label>
-        <textarea id="f-aiNotes" placeholder="Ej. Mencionar siempre el cenote privado, no prometer descuentos...">${d.aiNotes||''}</textarea>
+        <label>Anything else Lani should know</label>
+        <textarea id="f-aiNotes" placeholder="e.g. Always mention the private cenote, never promise discounts, use the guest's name...">${d.aiNotes||''}</textarea>
       </div>`;
 
     default: return '';
@@ -664,31 +787,48 @@ function renderStepContent(id) {
 }
 
 function renderSeasonRows() {
-  const seasons = formData.seasons || [{ name:'', rate:'', minNights:'', notes:'' }];
+  const seasons = formData.seasons || [{ name:'', rate:'', minNights:'' }];
   return seasons.map((s, i) => `
     <div class="season-row" id="season-${i}">
       <div>
-        ${i===0?'<label>SEASON NAME</label>':''}
-        <input type="text" id="sn-${i}" value="${s.name||''}" placeholder="Ej. Alta, Baja, Navidad">
+        ${i===0?'<label>Season name</label>':''}
+        <input type="text" id="sn-${i}" value="${s.name||''}" placeholder="e.g. High, Low, Christmas">
       </div>
       <div>
-        ${i===0?'<label>RATE / NIGHT</label>':''}
-        <input type="number" id="sr-${i}" value="${s.rate||''}" placeholder="$180">
+        ${i===0?'<label>Rate / night</label>':''}
+        <input type="number" id="sr-${i}" value="${s.rate||''}" placeholder="185">
       </div>
       <div>
-        ${i===0?'<label>MIN NIGHTS</label>':''}
+        ${i===0?'<label>Min nights</label>':''}
         <input type="number" id="sm-${i}" value="${s.minNights||''}" placeholder="2">
       </div>
-      <div style="display:flex;align-items:${i===0?'flex-end':'center'};padding-bottom:${i===0?'0':''}">
-        ${i===0?'<label style="opacity:0">X</label>':''}
-        ${i > 0 ? `<button class="remove-btn" onclick="removeSeason(${i})">×</button>` : '<div style="width:32px"></div>'}
+      <div style="display:flex;align-items:${i===0?'flex-end':'center'}">
+        ${i > 0 ? `<button class="remove-btn" onclick="removeSeason(${i})">×</button>` : '<div style="width:28px"></div>'}
+      </div>
+    </div>`).join('');
+}
+
+function renderRoomRows() {
+  const rooms = formData.rooms || [{ name:'', price:'' }];
+  return rooms.map((r, i) => `
+    <div class="season-row" id="room-${i}">
+      <div>
+        ${i===0?'<label>Room type</label>':''}
+        <input type="text" id="rn-${i}" value="${r.name||''}" placeholder="e.g. Ocean View Suite">
+      </div>
+      <div>
+        ${i===0?'<label>Price / night (USD)</label>':''}
+        <input type="number" id="rp-${i}" value="${r.price||''}" placeholder="185">
+      </div>
+      <div style="display:none"></div>
+      <div style="display:flex;align-items:${i===0?'flex-end':'center'}">
+        ${i > 0 ? `<button class="remove-btn" onclick="removeRoom(${i})">×</button>` : '<div style="width:28px"></div>'}
       </div>
     </div>`).join('');
 }
 
 function renderPolicyRow(id, label, placeholder) {
-  const d = formData;
-  const val = (d.policies||{})[id] || '';
+  const val = (formData.policies||{})[id] || '';
   return `
     <div class="policy-row">
       <label>
@@ -699,7 +839,6 @@ function renderPolicyRow(id, label, placeholder) {
     </div>`;
 }
 
-// ── LISTENERS ────────────────────────────────────────────
 function attachListeners(stepId) {
   document.querySelectorAll('.pill').forEach(p => {
     p.addEventListener('click', () => p.classList.toggle('selected'));
@@ -715,57 +854,65 @@ function toggleUpsell(id) {
 
 function toggleEsc(id) {
   const el = document.getElementById('esc-' + id);
-  const cb = el.querySelector('input[type="checkbox"]');
   el.classList.toggle('active');
-  cb.checked = el.classList.contains('active');
+  el.querySelector('input[type="checkbox"]').checked = el.classList.contains('active');
 }
 
 function togglePolicy(id) {
-  const tog = document.getElementById('tog-' + id);
-  tog.classList.toggle('on');
+  document.getElementById('tog-' + id).classList.toggle('on');
 }
 
 function addSeason() {
-  const seasons = collectSeasons();
-  seasons.push({ name:'', rate:'', minNights:'', notes:'' });
-  formData.seasons = seasons;
+  formData.seasons = collectSeasons();
+  formData.seasons.push({ name:'', rate:'', minNights:'' });
   document.getElementById('seasons-container').innerHTML = renderSeasonRows();
 }
 
 function removeSeason(i) {
-  const seasons = collectSeasons();
-  seasons.splice(i, 1);
-  formData.seasons = seasons;
+  formData.seasons = collectSeasons();
+  formData.seasons.splice(i, 1);
   document.getElementById('seasons-container').innerHTML = renderSeasonRows();
 }
 
 function collectSeasons() {
-  const seasons = [];
-  let i = 0;
+  const seasons = []; let i = 0;
   while (document.getElementById('sn-' + i)) {
-    seasons.push({
-      name: document.getElementById('sn-' + i).value,
-      rate: document.getElementById('sr-' + i).value,
-      minNights: document.getElementById('sm-' + i).value,
-    });
+    seasons.push({ name: document.getElementById('sn-'+i).value, rate: document.getElementById('sr-'+i).value, minNights: document.getElementById('sm-'+i).value });
     i++;
   }
   return seasons;
 }
 
-// ── SAVE ─────────────────────────────────────────────────
+function addRoom() {
+  formData.rooms = collectRooms();
+  formData.rooms.push({ name:'', price:'' });
+  document.getElementById('rooms-container').innerHTML = renderRoomRows();
+}
+
+function removeRoom(i) {
+  formData.rooms = collectRooms();
+  formData.rooms.splice(i, 1);
+  document.getElementById('rooms-container').innerHTML = renderRoomRows();
+}
+
+function collectRooms() {
+  const rooms = []; let i = 0;
+  while (document.getElementById('rn-' + i)) {
+    rooms.push({ name: document.getElementById('rn-'+i).value, price: document.getElementById('rp-'+i).value });
+    i++;
+  }
+  return rooms;
+}
+
 function saveStep() {
   const id = STEPS[currentStep].id;
-
   if (id === 'info') {
-    ['propName','city','country','address','bedrooms','bathrooms','maxGuests',
-     'checkin','checkout','wifiName','wifiPass'].forEach(f => {
+    ['propName','city','country','address','bedrooms','bathrooms','maxGuests','checkin','checkout','wifiName','wifiPass'].forEach(f => {
       const el = document.getElementById('f-' + f);
       if (el) formData[f] = el.value;
     });
     formData.languages = [...document.querySelectorAll('[data-group="languages"].selected')].map(p => p.dataset.val);
   }
-
   if (id === 'rates') {
     formData.seasons = collectSeasons();
     ['minNights','deposit','currency'].forEach(f => {
@@ -773,15 +920,20 @@ function saveStep() {
       if (el) formData[f] = el.value;
     });
   }
-
+  if (id === 'booking') {
+    formData.rooms = collectRooms();
+    ['directBookLink','airbnbLink','bookingComLink','vrboLink','breakfastIncluded','nearbyAttractions'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
+  }
   if (id === 'amenities') {
     formData.amenities = [...document.querySelectorAll('[data-group="amenities"].selected')].map(p => p.dataset.val);
-    const ex = document.getElementById('f-amenitiesExtra');
-    const nb = document.getElementById('f-nearestBeach');
-    if (ex) formData.amenitiesExtra = ex.value;
-    if (nb) formData.nearestBeach = nb.value;
+    ['amenitiesExtra','nearestBeach'].forEach(f => {
+      const el = document.getElementById('f-' + f);
+      if (el) formData[f] = el.value;
+    });
   }
-
   if (id === 'policies') {
     formData.policies = {};
     ['cancellation','smoking','pets','parties','extraGuests','earlyCheckin','lateCheckout'].forEach(p => {
@@ -791,7 +943,6 @@ function saveStep() {
     const op = document.getElementById('f-otherPolicies');
     if (op) formData.otherPolicies = op.value;
   }
-
   if (id === 'upsells') {
     formData.upsells = {};
     UPSELLS.forEach(u => {
@@ -804,24 +955,19 @@ function saveStep() {
     const ue = document.getElementById('f-upsellExtra');
     if (ue) formData.upsellExtra = ue.value;
   }
-
   if (id === 'escalation') {
-    formData.escalation = [...document.querySelectorAll('.esc-item.active')].map(el =>
-      el.id.replace('esc-', '')
-    );
+    formData.escalation = [...document.querySelectorAll('.esc-item.active')].map(el => el.id.replace('esc-', ''));
     const rt = document.getElementById('f-responseTime');
     if (rt) formData.responseTime = rt.value;
   }
-
   if (id === 'contact') {
-    ['ownerName','ownerWhatsapp','ownerEmail','propertyWhatsapp','propertyPhone2','propertyPhone3','tone','primaryLang','aiNotes'].forEach(f => {
+    ['ownerName','ownerWhatsapp','ownerEmail','propertyWhatsapp','propertyPhone2','tone','primaryLang','aiNotes'].forEach(f => {
       const el = document.getElementById('f-' + f);
       if (el) formData[f] = el.value;
     });
   }
 }
 
-// ── NAV ──────────────────────────────────────────────────
 function goNext() {
   saveStep();
   if (currentStep === STEPS.length - 1) {
@@ -840,10 +986,8 @@ function goBack() {
   window.scrollTo(0, 0);
 }
 
-// ── SUBMIT ───────────────────────────────────────────────
 function submitForm() {
   const payload = { ...formData, submittedAt: new Date().toISOString() };
-
   if (MAKE_WEBHOOK_URL) {
     fetch(MAKE_WEBHOOK_URL, {
       method: 'POST',
@@ -851,25 +995,22 @@ function submitForm() {
       body: JSON.stringify(payload)
     }).catch(() => {});
   }
-
   showDone(payload);
 }
 
 function showDone(d) {
   const upsellCount = Object.keys(d.upsells || {}).length;
   const escCount = (d.escalation || []).length;
-  const seasonCount = (d.seasons || []).filter(s => s.name).length;
-
+  const roomCount = (d.rooms || []).filter(r => r.name).length;
   document.getElementById('done-summary').innerHTML = `
     <div class="done-row"><span>Property</span><span>${d.propName || '—'}</span></div>
     <div class="done-row"><span>Location</span><span>${d.city || '—'}, ${d.country || '—'}</span></div>
-    <div class="done-row"><span>Seasons configured</span><span>${seasonCount}</span></div>
+    <div class="done-row"><span>Room types</span><span>${roomCount}</span></div>
     <div class="done-row"><span>Upsells enabled</span><span>${upsellCount}</span></div>
     <div class="done-row"><span>Escalation triggers</span><span>${escCount}</span></div>
-    <div class="done-row"><span>AI response language</span><span>${d.primaryLang || 'Both'}</span></div>
+    <div class="done-row"><span>AI language</span><span>${d.primaryLang || 'Both'}</span></div>
     <div class="done-row"><span>Owner WhatsApp</span><span>${d.ownerWhatsapp || '—'}</span></div>
   `;
-
   document.getElementById('screen-form').classList.remove('active');
   document.getElementById('screen-done').classList.add('active');
   window.scrollTo(0, 0);
@@ -884,7 +1025,6 @@ function restart() {
   window.scrollTo(0, 0);
 }
 
-// ── INIT ─────────────────────────────────────────────────
 renderStep();
 </script>
 </body>
